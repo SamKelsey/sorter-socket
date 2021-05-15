@@ -1,0 +1,9 @@
+.array-wrapper {
+  display: flex;
+}
+
+.array-item {
+  background-color: blueviolet;
+  margin: 2px;
+  width: 50px;
+}
