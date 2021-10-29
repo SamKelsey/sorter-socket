@@ -1,14 +1,12 @@
 package com.samkelsey.sortersocket.service;
 
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-@Service
-public class BubbleSort extends SortingService{
+public class BubbleSorterImpl extends BaseSorter {
 
-    public BubbleSort(SimpMessageSendingOperations simpMessageSendingOperations) {
+    public BubbleSorterImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
         super(simpMessageSendingOperations);
     }
 
