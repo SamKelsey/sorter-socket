@@ -1,5 +1,7 @@
 package com.samkelsey.sortersocket.service;
 
+import com.samkelsey.sortersocket.service.Sorter.BubbleSorterImpl;
+import com.samkelsey.sortersocket.service.Sorter.Sorter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 

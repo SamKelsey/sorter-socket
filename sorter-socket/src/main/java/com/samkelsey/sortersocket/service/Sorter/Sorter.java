@@ -1,4 +1,4 @@
-package com.samkelsey.sortersocket.service;
+package com.samkelsey.sortersocket.service.Sorter;
 
 import java.util.ArrayList;
 
