@@ -7,9 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Objects;
+import javax.validation.Valid;
 
 @Controller
 public class SorterController {
@@ -21,20 +20,11 @@ public class SorterController {
     }
 
     @MessageMapping("/sort")
-    public ResponseEntity<String> sort(SorterRequestDto sorterRequestDto) throws Exception {
-
-        if (Objects.isNull(sorterRequestDto)) {
-            return new ResponseEntity<>("Message body cannot be empty.", HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> sort(@Valid SorterRequestDto sorterRequestDto) throws Exception {
 
         Sorter sorter = sorterFactory.getSorter(sorterRequestDto.getSortingMethod());
         sorter.sort(sorterRequestDto.getSortingList());
 
         return new ResponseEntity<>("Sort request received.", HttpStatus.OK);
-    }
-
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("hello", HttpStatus.OK);
     }
 }

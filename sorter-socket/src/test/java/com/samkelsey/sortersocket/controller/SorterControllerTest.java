@@ -41,9 +41,9 @@ public class SorterControllerTest {
     }
 
     private SorterRequestDto getValidPayload() {
-        SorterRequestDto payload = new SorterRequestDto();
-        payload.setSortingMethod("bubblesort");
-        payload.setSortingList(new ArrayList<>(Arrays.asList(1, 3, 2, 5, 5, 10, 2, 4)));
-        return payload;
+        return new SorterRequestDto(
+                new ArrayList<>(Arrays.asList(1, 3, 2, 5, 5, 10, 2, 4)),
+                "bubblesort"
+        );
     }
 }
