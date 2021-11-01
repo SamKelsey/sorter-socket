@@ -1,8 +1,8 @@
 package com.samkelsey.sortersocket.controller;
 
 import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
-import com.samkelsey.sortersocket.service.Sorter.Sorter;
 import com.samkelsey.sortersocket.service.SorterFactory;
+import com.samkelsey.sortersocket.service.sorter.Sorter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,9 +40,6 @@ public class SorterControllerTest {
     }
 
     private SorterRequestDto getValidPayload() {
-        return new SorterRequestDto(
-                new ArrayList<>(Arrays.asList(1, 3, 2, 5, 5, 10, 2, 4)),
-                "bubblesort"
-        );
+        return new SorterRequestDto(Arrays.asList(3, 1, 5, 3));
     }
 }

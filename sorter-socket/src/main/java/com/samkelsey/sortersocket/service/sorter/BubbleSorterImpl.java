@@ -1,17 +1,18 @@
-package com.samkelsey.sortersocket.service.Sorter;
+package com.samkelsey.sortersocket.service.sorter;
 
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class BubbleSorterImpl extends BaseSorter {
+public class BubbleSorterImpl extends Sorter {
 
     public BubbleSorterImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
         super(simpMessageSendingOperations);
     }
 
     @Override
-    public ArrayList<Integer> sort(ArrayList<Integer> unsortedList) throws InterruptedException {
+    public List<Integer> sort(List<Integer> unsortedList) throws InterruptedException {
         int counter = 1;
         ArrayList<Integer> sortedList = new ArrayList<>(unsortedList);
         while (counter > 0){
@@ -23,7 +24,7 @@ public class BubbleSorterImpl extends BaseSorter {
                     sortedList.set(i + 1, placeholder);
                     send(sortedList);
                     counter++;
-                    Thread.sleep(500);
+                    Thread.sleep(getSortingSpeed() * 100L);
                 }
             }
         }

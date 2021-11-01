@@ -1,6 +1,5 @@
-package com.samkelsey.sortersocket.service;
+package com.samkelsey.sortersocket.service.sorter;
 
-import com.samkelsey.sortersocket.service.Sorter.BubbleSorterImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,7 +27,7 @@ public class BubbleSortTest extends SortingServiceTest{
         ArrayList<Integer> unsortedList = createValidList();
         ArrayList<Integer> expectedResult = new ArrayList<>(unsortedList);
         Collections.sort(expectedResult);
-        ArrayList<Integer> result = bubbleSorterImpl.sort(unsortedList);
+        List<Integer> result = bubbleSorterImpl.sort(unsortedList);
 
         assertEquals(result, expectedResult);
     }

@@ -1,4 +1,4 @@
-package com.samkelsey.sortersocket.service;
+package com.samkelsey.sortersocket.service.sorter;
 
 import org.junit.jupiter.api.Test;
 

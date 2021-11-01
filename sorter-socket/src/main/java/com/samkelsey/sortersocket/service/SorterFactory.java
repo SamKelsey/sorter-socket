@@ -1,7 +1,8 @@
 package com.samkelsey.sortersocket.service;
 
-import com.samkelsey.sortersocket.service.Sorter.BubbleSorterImpl;
-import com.samkelsey.sortersocket.service.Sorter.Sorter;
+import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
+import com.samkelsey.sortersocket.service.sorter.BubbleSorterImpl;
+import com.samkelsey.sortersocket.service.sorter.Sorter;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +10,19 @@ import org.springframework.stereotype.Service;
 public class SorterFactory {
 
     private final SimpMessageSendingOperations simpMessageSendingOperations;
+    private Sorter sorter;
 
     public SorterFactory(SimpMessageSendingOperations simpMessageSendingOperations) {
         this.simpMessageSendingOperations = simpMessageSendingOperations;
     }
 
-    public Sorter getSorter(String sorterName) {
-        if (sorterName.equals("bubbleSort")) {
-            return new BubbleSorterImpl(simpMessageSendingOperations);
-        } else {
-            // Default to returning this method for now.
-            return new BubbleSorterImpl(simpMessageSendingOperations);
+    public Sorter getSorter(SorterRequestDto sorterRequestDto) {
+        sorter = new BubbleSorterImpl(simpMessageSendingOperations);
+
+        if (sorterRequestDto.getSortingSpeed() != null) {
+            sorter.setSortingSpeed(sorterRequestDto.getSortingSpeed());
         }
+
+        return sorter;
     }
 }
