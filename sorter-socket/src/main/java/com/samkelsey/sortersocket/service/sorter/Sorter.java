@@ -9,10 +9,13 @@ public abstract class Sorter {
 
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private int sortingSpeed = 5;
+    private String sortingMethod;
 
-    public Sorter(SimpMessageSendingOperations simpMessageSendingOperations) {
+    public Sorter(SimpMessageSendingOperations simpMessageSendingOperations, String sortingMethod) {
         this.simpMessageSendingOperations = simpMessageSendingOperations;
+        this.sortingMethod = sortingMethod;
     }
+
 
     public abstract List<Integer> sort(List<Integer> unsortedList) throws InterruptedException;
 
@@ -27,4 +30,9 @@ public abstract class Sorter {
     public int getSortingSpeed() {
         return sortingSpeed;
     }
+
+    public String getSortingMethod() {
+        return sortingMethod;
+    }
+
 }

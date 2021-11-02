@@ -1,18 +1,21 @@
 package com.samkelsey.sortersocket.service.sorter;
 
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BubbleSorterImpl extends Sorter {
 
     public BubbleSorterImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
-        super(simpMessageSendingOperations);
+        super(simpMessageSendingOperations, "Bubblesort");
     }
 
     @Override
     public List<Integer> sort(List<Integer> unsortedList) throws InterruptedException {
+        System.out.println("Bubble sorting...");
         int counter = 1;
         ArrayList<Integer> sortedList = new ArrayList<>(unsortedList);
         while (counter > 0){
