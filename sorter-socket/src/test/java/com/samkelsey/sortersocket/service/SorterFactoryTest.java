@@ -6,41 +6,72 @@ import com.samkelsey.sortersocket.service.sorter.QuickSorterImpl;
 import com.samkelsey.sortersocket.service.sorter.Sorter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 public class SorterFactoryTest {
 
-    @Autowired
-    private SorterFactory sorterFactory;
+    @Mock
+    QuickSorterImpl mockQuickSorter;
+
+    @Mock
+    BubbleSorterImpl mockBubbleSorter;
+
+    @Mock
+    SimpMessageSendingOperations simpMessageSendingOperations;
+
 
     @Test
     void shouldReturnDefaultSorter_whenNoConfigProvided() {
-        SorterRequestDto req = new SorterRequestDto(Arrays.asList(1, 3));
-        Sorter sorter = sorterFactory.getSorter(req);
+        when(mockQuickSorter.getSortingMethod()).thenReturn("Quicksort");
+        when(mockBubbleSorter.getSortingMethod()).thenReturn("Bubblesort");
+        List<Sorter> sorterList = new ArrayList<>();
+        sorterList.add(mockBubbleSorter);
+        sorterList.add(mockQuickSorter);
 
-        assertTrue(sorter instanceof BubbleSorterImpl);
-        assertEquals(sorter.getSortingSpeed(), 5);
+        SorterFactory factory = new SorterFactory(sorterList);
+
+        SorterRequestDto req = createSorterRequestDto();
+
+        Sorter sorter = factory.getSorter(req);
+
+        assertEquals(sorter, mockBubbleSorter);
     }
 
     @Test
     void shouldReturnCustomSorter_whenConfigProvided() {
-        SorterRequestDto req = new SorterRequestDto(Arrays.asList(1, 3));
-        req.setSortingSpeed(4);
+        when(mockBubbleSorter.getSortingMethod()).thenReturn("Bubblesort");
+
+        QuickSorterImpl quickSorter = new QuickSorterImpl(simpMessageSendingOperations);
+
+        List<Sorter> sorterList = new ArrayList<>();
+        sorterList.add(mockBubbleSorter);
+        sorterList.add(quickSorter);
+
+        SorterFactory factory = new SorterFactory(sorterList);
+
+        SorterRequestDto req = createSorterRequestDto();
+        int sortingSpeed = 4;
+        req.setSortingSpeed(sortingSpeed);
         req.setSortingMethod("Quicksort");
 
-        Sorter sorter = sorterFactory.getSorter(req);
+        Sorter sorter = factory.getSorter(req);
 
-        assertTrue(sorter instanceof QuickSorterImpl);
-        assertEquals(sorter.getSortingSpeed(), 4);
+        assertEquals(sorter, quickSorter);
+        assertEquals(sorter.getSortingSpeed(), sortingSpeed);
+    }
+
+    private SorterRequestDto createSorterRequestDto() {
+        return new SorterRequestDto(Arrays.asList(1, 3, 2, 8, 3));
     }
 
 }
