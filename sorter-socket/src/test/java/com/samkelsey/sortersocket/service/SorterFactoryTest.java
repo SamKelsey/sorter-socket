@@ -1,5 +1,6 @@
 package com.samkelsey.sortersocket.service;
 
+import com.samkelsey.sortersocket.TestUtils;
 import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
 import com.samkelsey.sortersocket.service.sorter.BubbleSorterImpl;
 import com.samkelsey.sortersocket.service.sorter.QuickSorterImpl;
@@ -11,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +40,7 @@ public class SorterFactoryTest {
 
         SorterFactory factory = new SorterFactory(sorterList);
 
-        SorterRequestDto req = createSorterRequestDto();
+        SorterRequestDto req = TestUtils.createSorterRequestDto();
 
         Sorter sorter = factory.getSorter(req);
 
@@ -59,7 +59,7 @@ public class SorterFactoryTest {
 
         SorterFactory factory = new SorterFactory(sorterList);
 
-        SorterRequestDto req = createSorterRequestDto();
+        SorterRequestDto req = TestUtils.createSorterRequestDto();
         int sortingSpeed = 4;
         req.setSortingSpeed(sortingSpeed);
         req.setSortingMethod("Quicksort");
@@ -68,10 +68,6 @@ public class SorterFactoryTest {
 
         assertEquals(sorter, quickSorter);
         assertEquals(sorter.getSortingSpeed(), sortingSpeed);
-    }
-
-    private SorterRequestDto createSorterRequestDto() {
-        return new SorterRequestDto(Arrays.asList(1, 3, 2, 8, 3));
     }
 
 }
