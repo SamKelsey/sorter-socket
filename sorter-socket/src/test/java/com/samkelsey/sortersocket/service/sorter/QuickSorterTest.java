@@ -12,17 +12,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class BubbleSortTest extends SorterTest {
+public class QuickSorterTest extends SorterTest {
 
     @Mock
-    private SimpMessageSendingOperations simpMessageSendingOperations;
+    SimpMessageSendingOperations simpMessageSendingOperations;
 
     @InjectMocks
-    private BubbleSorterImpl bubbleSorterImpl;
+    QuickSorterImpl sorter;
 
     @Test
     void shouldSortCorrectly_whenValidList() throws InterruptedException {
-        Sorter sorter = new BubbleSorterImpl(simpMessageSendingOperations);
         List<List<Integer>> lists = createValidLists();
         List<Integer> sortedList = sorter.sort(lists.get(0));
         assertEquals(sortedList, lists.get(1));
