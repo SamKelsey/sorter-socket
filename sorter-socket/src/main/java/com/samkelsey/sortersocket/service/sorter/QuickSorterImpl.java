@@ -10,7 +10,8 @@ import java.util.List;
 @Service
 public class QuickSorterImpl extends Sorter {
 
-    Logger logger = LoggerFactory.getLogger(QuickSorterImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(QuickSorterImpl.class);
+    private List<Integer> workingList;
 
     public QuickSorterImpl(SimpMessageSendingOperations simpMessageSendingOperations) {
         super(simpMessageSendingOperations, "Quicksort");
@@ -18,7 +19,28 @@ public class QuickSorterImpl extends Sorter {
 
     @Override
     public List<Integer> sort(List<Integer> unsortedList) throws InterruptedException {
-        logger.info("Quick sorting...");
+        workingList = unsortedList;
         return null;
+    }
+
+    /**
+     * Recursive method that updates workingList, within a given subsection, high and low.
+     **/
+    private List<Integer> quicksort(int low, int high) {
+        return null;
+    }
+
+    /**
+     * Returns index of pivot after being put in correct place.
+     */
+    private int partition(List<Integer> arr) {
+        return 1;
+    }
+
+    /**
+     * Utility method to swap 2 workingList values, given their indexes.
+     */
+    private void swap(int i, int j) {
+
     }
 }
