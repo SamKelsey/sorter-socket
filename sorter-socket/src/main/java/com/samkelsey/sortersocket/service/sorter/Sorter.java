@@ -2,7 +2,6 @@ package com.samkelsey.sortersocket.service.sorter;
 
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Sorter {
@@ -19,7 +18,7 @@ public abstract class Sorter {
 
     public abstract List<Integer> sort(List<Integer> unsortedList) throws InterruptedException;
 
-    protected void send(ArrayList<Integer> list) {
+    protected void send(List<Integer> list) {
         simpMessageSendingOperations.convertAndSend("/sorting", list);
     }
 

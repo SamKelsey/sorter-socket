@@ -73,5 +73,6 @@ public class QuickSorterImpl extends Sorter {
         int swapTemp = workingList.get(i);
         workingList.set(i, workingList.get(j));
         workingList.set(j, swapTemp);
+        send(workingList);
     }
 }
