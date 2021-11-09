@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-import javax.validation.Valid;
-
 @Controller
 public class SorterController {
 
@@ -20,8 +18,9 @@ public class SorterController {
     }
 
     @MessageMapping("/sort")
-    public ResponseEntity<String> sort(@Valid SorterRequestDto sorterRequestDto) throws Exception {
+    public ResponseEntity<String> sort(SorterRequestDto sorterRequestDto) throws Exception {
 
+        // TODO: Implement new thread to sort and send to subscribers so controller can return success response quickly.
         Sorter sorter = sorterFactory.getSorter(sorterRequestDto);
         sorter.sort(sorterRequestDto.getSortingList());
 

@@ -19,6 +19,7 @@ public class QuickSorterImpl extends Sorter {
 
     @Override
     public List<Integer> sort(List<Integer> unsortedList) throws InterruptedException {
+        logger.info("Beginning Quicksort");
         workingList = unsortedList;
         quicksort(0, workingList.size() - 1);
         return workingList;
@@ -29,7 +30,7 @@ public class QuickSorterImpl extends Sorter {
      * @param low Minimum index of workingList to work from.
      * @param high Maximum index of workingList to work from.
      */
-    private void quicksort(int low, int high) {
+    private void quicksort(int low, int high) throws InterruptedException {
         if (low < high) {
             // Partition the array
             int pi = partition(low, high);
@@ -46,7 +47,7 @@ public class QuickSorterImpl extends Sorter {
      * @param high Maxumum working index for workingList subarray
      * @return An int, marking the updated position of the pivot element.
      */
-    private int partition(int low, int high) {
+    private int partition(int low, int high) throws InterruptedException {
         // Take last element as pivot
         int pi = workingList.get(high);
         int i = low - 1;
@@ -69,10 +70,11 @@ public class QuickSorterImpl extends Sorter {
      * @param i index of workingList to swap
      * @param j index of workingList to swap
      */
-    private void swap(int i, int j) {
+    private void swap(int i, int j) throws InterruptedException {
         int swapTemp = workingList.get(i);
         workingList.set(i, workingList.get(j));
         workingList.set(j, swapTemp);
         send(workingList);
+        Thread.sleep(getSortingSpeed() * 100L);
     }
 }

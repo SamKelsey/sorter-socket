@@ -28,7 +28,14 @@ export const App = () => {
   }, []);
 
   const sendMessage = () => {
-    stompClient.send("/app/sort", {}, JSON.stringify(array));
+    stompClient.send(
+      "/app/sort",
+      {},
+      JSON.stringify({
+        "sorting-list": array,
+        "sorting-method": "Quicksort",
+      })
+    );
   };
 
   const generateArray = () => {
