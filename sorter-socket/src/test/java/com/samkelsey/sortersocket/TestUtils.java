@@ -7,6 +7,8 @@ import java.util.Arrays;
 public class TestUtils {
 
     public static SorterRequestDto createSorterRequestDto() {
-        return new SorterRequestDto(Arrays.asList(1, 3, 2, 8, 3));
+        SorterRequestDto dto = new SorterRequestDto();
+        dto.setSortingList(Arrays.asList(1, 3, 2, 8, 3));
+        return dto;
     }
 }
