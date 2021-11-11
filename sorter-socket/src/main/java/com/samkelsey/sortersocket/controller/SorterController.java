@@ -25,7 +25,6 @@ public class SorterController {
     @MessageMapping("/sort")
     public void sort(@Valid @RequestBody SorterRequestDto sorterRequestDto) throws Exception {
         logger.info("Passed validation");
-        // TODO: Implement new thread to sort and send to subscribers so controller can return success response quickly.
         Sorter sorter = sorterFactory.getSorter(sorterRequestDto);
         sorter.sort(sorterRequestDto.getSortingList());
     }

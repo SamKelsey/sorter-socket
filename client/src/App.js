@@ -32,8 +32,8 @@ export const App = () => {
       "/app/sort",
       {},
       JSON.stringify({
-        "sorting-list": array,
         "sorting-method": "Quicksort",
+        "sorting-speed": 1,
       })
     );
   };
