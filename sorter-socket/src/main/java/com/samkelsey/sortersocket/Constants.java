@@ -7,6 +7,7 @@ public final class Constants {
     }
 
     public final static String PREFIX = "/app";
-    public final static String BROKER = "/sorting";
+    public final static String SORTING = "/sorting";
+    public final static String ERRORS = "/errors";
     public final static String REGISTRY = "/socket";
 }
