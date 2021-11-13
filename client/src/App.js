@@ -16,9 +16,7 @@ export const App = () => {
       stomp.subscribe("/sorting", function (response) {
         setArray(JSON.parse(response.body));
       });
-      stomp.subscribe("/errors", function (response) {
-        console.log(response);
-      });
+      stomp.subscribe("/errors", function (response) {});
     });
     setStompClient(stomp);
 
@@ -35,7 +33,7 @@ export const App = () => {
       "/app/sort",
       {},
       JSON.stringify({
-        "sorting-list": array,
+        // "sorting-list": array,
         "sorting-method": "Quicksort",
         "sorting-speed": 1,
       })

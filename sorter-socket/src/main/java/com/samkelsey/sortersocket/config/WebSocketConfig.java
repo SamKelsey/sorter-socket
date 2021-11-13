@@ -13,12 +13,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+        // Channels to subscribe to
         config.enableSimpleBroker(Constants.SORTING, Constants.ERRORS);
-        config.setApplicationDestinationPrefixes(Constants.PREFIX, Constants.ERRORS);
+
+        // Controller endpoint prefixes
+        config.setApplicationDestinationPrefixes(Constants.PREFIX);
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // Endpoint for handshake
         registry.addEndpoint(Constants.REGISTRY);
         registry.addEndpoint(Constants.REGISTRY).setAllowedOrigins("http://localhost:3000").withSockJS();
     }
