@@ -1,5 +1,6 @@
 package com.samkelsey.sortersocket.service.sorter;
 
+import com.samkelsey.sortersocket.dto.model.SorterResponseDto;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public abstract class Sorter {
 
     public abstract List<Integer> sort(List<Integer> unsortedList) throws InterruptedException;
 
-    protected void send(List<Integer> list) {
-        simpMessageSendingOperations.convertAndSend("/sorting", list);
+    protected void send(SorterResponseDto response) {
+        simpMessageSendingOperations.convertAndSend("/sorting", response);
     }
 
     public void setSortingSpeed(int sortingSpeed) {

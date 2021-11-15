@@ -3,6 +3,7 @@ package com.samkelsey.sortersocket.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
@@ -15,7 +16,7 @@ public class BadRequestException {
 
     @MessageExceptionHandler(MethodArgumentNotValidException.class)
     @SendTo("/errors")
-    public ApiException handleBadRequest(MethodArgumentNotValidException ex) {
+    public ResponseEntity<String> handleBadRequest(MethodArgumentNotValidException ex) {
         String exMsg = "";
         if (ex.getBindingResult() != null && ex.getBindingResult().getFieldError() != null) {
             exMsg = ex.getBindingResult().getFieldError().getDefaultMessage();
@@ -23,6 +24,6 @@ public class BadRequestException {
         String msg = String.format("Bad request: %s", exMsg);
         logger.error(msg);
 
-        return new ApiException(HttpStatus.BAD_REQUEST, msg);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 }

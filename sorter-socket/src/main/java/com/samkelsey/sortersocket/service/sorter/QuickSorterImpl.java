@@ -1,5 +1,6 @@
 package com.samkelsey.sortersocket.service.sorter;
 
+import com.samkelsey.sortersocket.dto.model.SorterResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -74,7 +75,7 @@ public class QuickSorterImpl extends Sorter {
         int swapTemp = workingList.get(i);
         workingList.set(i, workingList.get(j));
         workingList.set(j, swapTemp);
-        send(workingList);
+        send(new SorterResponseDto(workingList));
         Thread.sleep(getSortingSpeed() * 100L);
     }
 }

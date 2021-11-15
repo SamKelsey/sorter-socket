@@ -1,5 +1,6 @@
 package com.samkelsey.sortersocket.service.sorter;
 
+import com.samkelsey.sortersocket.dto.model.SorterResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -29,7 +30,7 @@ public class BubbleSorterImpl extends Sorter {
                     int placeholder = sortedList.get(i);
                     sortedList.set(i, sortedList.get(i + 1));
                     sortedList.set(i + 1, placeholder);
-                    send(sortedList);
+                    send(new SorterResponseDto(sortedList, new int[]{i, i + 1}));
                     counter++;
                     Thread.sleep(getSortingSpeed() * 100L);
                 }
