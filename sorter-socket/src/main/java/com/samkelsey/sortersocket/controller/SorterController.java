@@ -24,7 +24,7 @@ public class SorterController {
 
     @MessageMapping("/sort")
     public void sort(@Valid @RequestBody SorterRequestDto sorterRequestDto) throws Exception {
-        logger.info("Passed validation");
+        logger.info("Processing new submission.");
         Sorter sorter = sorterFactory.getSorter(sorterRequestDto);
         sorter.sort(sorterRequestDto.getSortingList());
     }

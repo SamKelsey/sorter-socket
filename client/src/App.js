@@ -14,7 +14,7 @@ export const App = () => {
     const stomp = Stomp.over(socket);
     stomp.connect({}, function (frame) {
       stomp.subscribe("/sorting", function (response) {
-        setArray(JSON.parse(response.body));
+        setArray(JSON.parse(response.body)["sorting-list"]);
       });
       stomp.subscribe("/errors", function (response) {});
     });
@@ -33,8 +33,8 @@ export const App = () => {
       "/app/sort",
       {},
       JSON.stringify({
-        // "sorting-list": array,
-        "sorting-method": "Quicksort",
+        "sorting-list": array,
+        "sorting-method": "Bubblesort",
         "sorting-speed": 1,
       })
     );
