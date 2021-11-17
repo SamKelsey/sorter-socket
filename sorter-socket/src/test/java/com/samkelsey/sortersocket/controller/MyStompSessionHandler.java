@@ -1,6 +1,5 @@
 package com.samkelsey.sortersocket.controller;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -13,6 +12,7 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
+        logger.info("RECEIVED MESSAGE");
         logger.info(payload.toString());
         super.handleFrame(headers, payload);
     }
@@ -22,15 +22,6 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/sorting", this);
         session.subscribe("/errors", this);
         logger.info("Client connected");
-
-        JSONObject json = new JSONObject();
-        try {
-            json.put("sorting-list", new int[]{1, 3, 2, 5});
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-
-        session.send("/app/sort", new int[]{1, 3, 2, 5});
         super.afterConnected(session, connectedHeaders);
     }
 }
