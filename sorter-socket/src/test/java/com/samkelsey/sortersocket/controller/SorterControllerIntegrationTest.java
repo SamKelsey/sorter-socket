@@ -2,6 +2,7 @@ package com.samkelsey.sortersocket.controller;
 
 import com.samkelsey.sortersocket.TestUtils;
 import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -32,53 +33,65 @@ public class SorterControllerIntegrationTest {
 
     @Value("${local.server.port}")
     private int port;
+    private WebSocketStompClient stompClient;
+    private Stack<List<Integer>> receivedMessages = new Stack<>();
+    private final String SOCKET_ENDPOINT = "ws://localhost:%d/socket";
 
     Logger logger = LoggerFactory.getLogger(SorterControllerIntegrationTest.class);
 
+    @BeforeEach
+    void init() {
+        WebSocketClient client = new StandardWebSocketClient();
+        stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        receivedMessages.clear();
+    }
+
     @Test
     void shouldReturnSortedList_whenValidPayload() throws Exception {
-        WebSocketStompClient stompClient = getStompClient();
-        Stack<List<Integer>> receivedMessages = new Stack<>();
-
         StompSession session = stompClient.connect(
-                String.format("ws://localhost:%d/socket", port),
-                new StompSessionHandlerAdapter() {
+                String.format(SOCKET_ENDPOINT, port),
+                new MyStompSessionHandler() {
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
                         return SorterRequestDto.class;
-                    }
-
-                    @Override
-                    public void handleFrame(StompHeaders headers, Object payload) {
-                        SorterRequestDto msg = (SorterRequestDto) payload;
-                        receivedMessages.push(msg.getSortingList());
-                        logger.info(String.format("Sorting list status: %s", msg.getSortingList().toString()));
-                        super.handleFrame(headers, payload);
-                    }
-
-                    @Override
-                    public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-                        session.subscribe("/sorting", this);
-                        session.subscribe("/errors", this);
-                        logger.info("Client connected");
-                        super.afterConnected(session, connectedHeaders);
                     }
                 }
         ).get();
 
         session.send("/app/sort", TestUtils.createSorterRequestDto());
-        // TODO: Find way to keep test running until connection is closed (all sorting messages have been sent)
         Thread.sleep(2000);
+
         List<Integer> expected = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 8));
         assertEquals(expected, receivedMessages.pop());
-        session.disconnect();
 
+        session.disconnect();
     }
 
-    private WebSocketStompClient getStompClient() {
-        WebSocketClient client = new StandardWebSocketClient();
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        return stompClient;
+    @Test
+    void shouldReturnException_whenInvalidPayload() {
+        // TODO
+    }
+
+    private class MyStompSessionHandler extends StompSessionHandlerAdapter {
+
+        Logger logger = LoggerFactory.getLogger(MyStompSessionHandler.class);
+
+        @Override
+        public void handleFrame(StompHeaders headers, Object payload) {
+            SorterRequestDto msg = (SorterRequestDto) payload;
+            receivedMessages.push(msg.getSortingList());
+            logger.info(String.format("Sorting list status: %s", msg.getSortingList().toString()));
+            super.handleFrame(headers, payload);
+        }
+
+        @Override
+        public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+            session.subscribe("/sorting", this);
+            session.subscribe("/errors", this);
+            logger.info("Client connected");
+            super.afterConnected(session, connectedHeaders);
+        }
     }
 }

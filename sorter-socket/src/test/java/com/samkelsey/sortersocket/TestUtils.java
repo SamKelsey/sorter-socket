@@ -11,4 +11,10 @@ public class TestUtils {
         dto.setSortingList(Arrays.asList(1, 3, 2, 8, 3));
         return dto;
     }
+
+    public static SorterRequestDto createInvalidSorterRequestDto() {
+        SorterRequestDto dto = new SorterRequestDto();
+        dto.setSortingMethod("Bubblesort");
+        return dto;
+    }
 }
