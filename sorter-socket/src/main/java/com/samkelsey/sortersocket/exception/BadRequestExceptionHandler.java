@@ -10,9 +10,9 @@ import org.springframework.messaging.handler.annotation.support.MethodArgumentNo
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @ControllerAdvice
-public class BadRequestException {
+public class BadRequestExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(BadRequestException.class);
+    Logger logger = LoggerFactory.getLogger(BadRequestExceptionHandler.class);
 
     @MessageExceptionHandler(MethodArgumentNotValidException.class)
     @SendTo("/errors")
