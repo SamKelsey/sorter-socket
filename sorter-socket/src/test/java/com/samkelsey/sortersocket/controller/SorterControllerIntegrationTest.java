@@ -1,7 +1,11 @@
 package com.samkelsey.sortersocket.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samkelsey.sortersocket.TestUtils;
-import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
+import com.samkelsey.sortersocket.dto.model.SorterResponseDto;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -20,7 +25,12 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -33,7 +43,7 @@ public class SorterControllerIntegrationTest {
     private int port;
     private WebSocketStompClient stompClient;
     private final Stack<List<Integer>> receivedMessages = new Stack<>();
-    private PriorityQueue<String> receivedErrors = new PriorityQueue<>();
+    private PriorityQueue<ResponseEntity<String>> receivedErrors = new PriorityQueue<>();
     private String SOCKET_ENDPOINT;
 
     Logger logger = LoggerFactory.getLogger(SorterControllerIntegrationTest.class);
@@ -57,7 +67,7 @@ public class SorterControllerIntegrationTest {
                 new MyStompSessionHandler() {
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
-                        return SorterRequestDto.class;
+                        return Object.class;
                     }
                 }
         ).get();
@@ -78,7 +88,7 @@ public class SorterControllerIntegrationTest {
                 new MyStompSessionHandler() {
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
-                        return String.class;
+                        return ResponseEntity.class;
                     }
                 }
         ).get();
@@ -95,7 +105,7 @@ public class SorterControllerIntegrationTest {
 
         @Override
         public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-            logger.error(String.format("Error occured: %s", exception.getMessage()));
+            logger.error(String.format("Error occured: %s", exception));
             super.handleException(session, command, headers, payload, exception);
         }
 
@@ -104,15 +114,20 @@ public class SorterControllerIntegrationTest {
 
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
-            if (headers.getDestination().equals("/sorting")) {
-                SorterRequestDto msg = (SorterRequestDto) payload;
-                receivedMessages.push(msg.getSortingList());
-                logger.info(String.format("Sorting list status: %s", msg.getSortingList().toString()));
-            } else if (headers.getDestination().equals("/errors")) {
+            try {
+                SorterResponseDto dto = deserializePayload(payload);
 
-                receivedErrors.add(msg);
-                logger.info(String.format("Error received: %s", msg));
+                if (headers.getDestination().equals("/sorting")) {
+                    receivedMessages.push(dto.getSortingList());
+                    logger.info(String.format("Sorting list status: %s", dto.getSortingList()));
+                } else if (headers.getDestination().equals("/errors")) {
+                    // TODO: Will require different deserialization method.
+                }
+
+            } catch (Exception e) {
+                logger.error(e.getMessage());
             }
+
             super.handleFrame(headers, payload);
         }
 
@@ -122,6 +137,14 @@ public class SorterControllerIntegrationTest {
             session.subscribe("/errors", this);
             logger.info("Client connected");
             super.afterConnected(session, connectedHeaders);
+        }
+
+        private SorterResponseDto deserializePayload(Object payload) throws JSONException, JsonProcessingException {
+            ObjectMapper mapper = new ObjectMapper();
+            JSONObject body = new JSONObject(
+                    new String((byte []) payload, StandardCharsets.UTF_8)
+            ).getJSONObject("body");
+            return mapper.readValue(body.toString(), SorterResponseDto.class);
         }
     }
 }
