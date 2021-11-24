@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -43,7 +42,7 @@ public class SorterControllerIntegrationTest {
     private int port;
     private WebSocketStompClient stompClient;
     private final Stack<List<Integer>> receivedMessages = new Stack<>();
-    private PriorityQueue<ResponseEntity<String>> receivedErrors = new PriorityQueue<>();
+    private PriorityQueue<String> receivedErrors = new PriorityQueue<>();
     private String SOCKET_ENDPOINT;
 
     Logger logger = LoggerFactory.getLogger(SorterControllerIntegrationTest.class);
@@ -88,7 +87,7 @@ public class SorterControllerIntegrationTest {
                 new MyStompSessionHandler() {
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
-                        return ResponseEntity.class;
+                        return Object.class;
                     }
                 }
         ).get();
@@ -96,7 +95,7 @@ public class SorterControllerIntegrationTest {
         session.send("/app/sort", TestUtils.createInvalidSorterRequestDto());
         Thread.sleep(2000);
         System.out.println(receivedErrors);
-
+        // TODO: Need to invoke assertion to check correct error message returned.
     }
 
     private abstract class MyStompSessionHandler extends StompSessionHandlerAdapter {
@@ -115,13 +114,15 @@ public class SorterControllerIntegrationTest {
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
             try {
-                SorterResponseDto dto = deserializePayload(payload);
+                String destination = headers.getDestination();
+                Object dto = deserializePayload(destination, payload);
 
-                if (headers.getDestination().equals("/sorting")) {
-                    receivedMessages.push(dto.getSortingList());
-                    logger.info(String.format("Sorting list status: %s", dto.getSortingList()));
-                } else if (headers.getDestination().equals("/errors")) {
-                    // TODO: Will require different deserialization method.
+                if (destination.equals("/sorting")) {
+                    receivedMessages.push(((SorterResponseDto) dto).getSortingList());
+                    logger.info(String.format("Sorting list status: %s", ((SorterResponseDto) dto).getSortingList()));
+                } else if (destination.equals("/errors")) {
+                    receivedErrors.add((String) dto);
+                    logger.info(String.format("Error received: %s", (String) dto));
                 }
 
             } catch (Exception e) {
@@ -139,12 +140,17 @@ public class SorterControllerIntegrationTest {
             super.afterConnected(session, connectedHeaders);
         }
 
-        private SorterResponseDto deserializePayload(Object payload) throws JSONException, JsonProcessingException {
+        private Object deserializePayload(String destination, Object payload) throws JSONException, JsonProcessingException {
             ObjectMapper mapper = new ObjectMapper();
-            JSONObject body = new JSONObject(
-                    new String((byte []) payload, StandardCharsets.UTF_8)
-            ).getJSONObject("body");
-            return mapper.readValue(body.toString(), SorterResponseDto.class);
+            JSONObject json = new JSONObject(new String((byte []) payload, StandardCharsets.UTF_8));
+            if (destination.equals("/sorting")) {
+                JSONObject body = json.getJSONObject("body");
+                return mapper.readValue(body.toString(), SorterResponseDto.class);
+            } else if (destination.equals("/errors")) {
+                return json.getString("body");
+            }
+
+            return null;
         }
     }
 }
