@@ -13,8 +13,9 @@ export const App = () => {
     var socket = new SockJS("http://localhost:8080/socket");
     const stomp = Stomp.over(socket);
     stomp.connect({}, function (frame) {
-      stomp.subscribe("/sorting", function (response) {
-        setArray(JSON.parse(response.body)["sorting-list"]);
+      stomp.subscribe("/sorting", function ({ body }) {
+        console.log("Response: " + body);
+        // setArray(response.body["sorting-list"]);
       });
       stomp.subscribe("/errors", function (response) {});
     });

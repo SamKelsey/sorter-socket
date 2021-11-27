@@ -13,6 +13,7 @@ public class SorterRequestDto {
     @JsonProperty("sorting-list")
     private List<Integer> sortingList;
 
+    @NotNull(message = "sorting-method cannot be null.")
     @JsonProperty("sorting-method")
     private String sortingMethod;
 

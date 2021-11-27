@@ -20,10 +20,10 @@ public class SorterFactory {
     }
 
     public Sorter getSorter(SorterRequestDto sorterRequestDto) {
-        Sorter sorter = sorterServicesByMethodName.getOrDefault(
-                sorterRequestDto.getSortingMethod(),
-                sorterServicesByMethodName.get("Bubblesort")
-        );
+        Sorter sorter = sorterServicesByMethodName.get(sorterRequestDto.getSortingMethod());
+//        if (Objects.isNull(sorter)) {
+//            throw new MethodArgumentNotValidException();
+//        }
 
         if (sorterRequestDto.getSortingSpeed() != null) {
             sorter.setSortingSpeed(sorterRequestDto.getSortingSpeed());
