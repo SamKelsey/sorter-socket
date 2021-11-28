@@ -26,7 +26,7 @@ public class SorterFactory {
         if (Objects.isNull(sorter)) {
             throw new BadRequestException(
                     String.format(
-                            "%s sorting-method does not exist.",
+                            "'%s' sorting-method does not exist.",
                             sorterRequestDto.getSortingMethod()
                     )
             );

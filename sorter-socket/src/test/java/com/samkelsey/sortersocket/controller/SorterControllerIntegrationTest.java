@@ -3,6 +3,7 @@ package com.samkelsey.sortersocket.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samkelsey.sortersocket.TestUtils;
+import com.samkelsey.sortersocket.dto.model.SorterRequestDto;
 import com.samkelsey.sortersocket.dto.model.SorterResponseDto;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,31 +47,21 @@ public class SorterControllerIntegrationTest {
     @Value("${local.server.port}")
     private int port;
 
-    private WebSocketStompClient stompClient;
     private StompSession session;
 
     private final Stack<List<Integer>> receivedMessages = new Stack<>();
     private final Stack<ResponseEntity<String>> receivedErrors = new Stack<>();
 
-    private String SOCKET_ENDPOINT;
     private final String SORTER_ENDPOINT = "/app/sort";
-
     private final int THREAD_SLEEP_DURATION = 2000;
 
     @BeforeEach
-    void init() {
-        SOCKET_ENDPOINT = String.format("ws://localhost:%d/socket", port);
-
+    void init() throws Exception {
         WebSocketClient client = new StandardWebSocketClient();
-        stompClient = new WebSocketStompClient(client);
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        receivedMessages.clear();
-        receivedErrors.clear();
-    }
-
-    @Test
-    void shouldReturnSortedList_whenValidPayload() throws Exception {
+        String SOCKET_ENDPOINT = String.format("ws://localhost:%d/socket", port);
         session = stompClient.connect(
                 SOCKET_ENDPOINT,
                 new MyStompSessionHandler() {
@@ -81,6 +72,12 @@ public class SorterControllerIntegrationTest {
                 }
         ).get();
 
+        receivedMessages.clear();
+        receivedErrors.clear();
+    }
+
+    @Test
+    void shouldReturnSortedList_whenValidPayload() throws Exception {
         session.send(SORTER_ENDPOINT, TestUtils.createSorterRequestDto());
         Thread.sleep(THREAD_SLEEP_DURATION);
 
@@ -89,17 +86,7 @@ public class SorterControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnException_whenInvalidPayload() throws Exception {
-        session = stompClient.connect(
-                SOCKET_ENDPOINT,
-                new MyStompSessionHandler() {
-                    @Override
-                    public Type getPayloadType(StompHeaders headers) {
-                        return Object.class;
-                    }
-                }
-        ).get();
-
+    void shouldReturnException_whenMissingRequiredField() throws Exception {
         session.send(SORTER_ENDPOINT, TestUtils.createInvalidSorterRequestDto());
         Thread.sleep(THREAD_SLEEP_DURATION);
 
@@ -107,6 +94,24 @@ public class SorterControllerIntegrationTest {
         ResponseEntity<String> expected = ResponseEntity
                 .status(400)
                 .body("Bad request: sorting-list cannot be null.");
+
+        assertEquals(expected.getStatusCode(), result.getStatusCode());
+        assertEquals(expected.getBody(), result.getBody());
+    }
+
+    @Test
+    void shouldReturnBadRequestException_whenInvalidSorterMethod() throws Exception {
+        SorterRequestDto dto = new SorterRequestDto();
+        dto.setSortingList(new ArrayList<>(Arrays.asList(1, 3, 2, 5)));
+        dto.setSortingMethod("fail");
+
+        session.send(SORTER_ENDPOINT, dto);
+        Thread.sleep(THREAD_SLEEP_DURATION);
+
+        ResponseEntity<String> result = receivedErrors.pop();
+        ResponseEntity<String> expected = ResponseEntity
+                .status(400)
+                .body("Bad request: 'fail' sorting-method does not exist.");
 
         assertEquals(expected.getStatusCode(), result.getStatusCode());
         assertEquals(expected.getBody(), result.getBody());
