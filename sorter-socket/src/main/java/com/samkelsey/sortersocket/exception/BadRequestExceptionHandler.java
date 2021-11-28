@@ -8,9 +8,12 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class BadRequestExceptionHandler {
+
+    private final String BASE_MESSAGE = "Bad request: ";
 
     Logger logger = LoggerFactory.getLogger(BadRequestExceptionHandler.class);
 
@@ -21,7 +24,16 @@ public class BadRequestExceptionHandler {
         if (ex.getBindingResult() != null && ex.getBindingResult().getFieldError() != null) {
             exMsg = ex.getBindingResult().getFieldError().getDefaultMessage();
         }
-        String msg = String.format("Bad request: %s", exMsg);
+        String msg = BASE_MESSAGE + exMsg;
+        logger.error(msg);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @SendTo("/errors")
+    public ResponseEntity<String> handleBadRequest(BadRequestException ex) {
+        String msg = BASE_MESSAGE + ex.getMessage();
         logger.error(msg);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);

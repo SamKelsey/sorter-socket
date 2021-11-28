@@ -9,6 +9,7 @@ public class TestUtils {
     public static SorterRequestDto createSorterRequestDto() {
         SorterRequestDto dto = new SorterRequestDto();
         dto.setSortingList(Arrays.asList(1, 3, 2, 8, 3));
+        dto.setSortingMethod("Bubblesort");
         return dto;
     }
 
