@@ -86,7 +86,7 @@ public class SorterControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnException_whenMissingRequiredField() throws Exception {
+    void shouldReturnError_whenMissingRequiredField() throws Exception {
         session.send(SORTER_ENDPOINT, TestUtils.createInvalidSorterRequestDto());
         Thread.sleep(THREAD_SLEEP_DURATION);
 
@@ -100,7 +100,7 @@ public class SorterControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnBadRequestException_whenInvalidSorterMethod() throws Exception {
+    void shouldReturnBadRequestError_whenInvalidSorterMethod() throws Exception {
         SorterRequestDto dto = new SorterRequestDto();
         dto.setSortingList(new ArrayList<>(Arrays.asList(1, 3, 2, 5)));
         dto.setSortingMethod("fail");
