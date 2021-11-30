@@ -25,6 +25,18 @@ public abstract class Sorter {
         simpMessageSendingOperations.convertAndSend("/sorting", ResponseEntity.status(HttpStatus.OK).body(response));
     }
 
+    /**
+     * Performs an in-place swap of two elements in a list, given their indexes.
+     * @param i Index of first element to swap.
+     * @param j Index of second element to swap.
+     * @param arr List to perform swap on.
+     */
+    protected void swap(int i, int j, List<Integer> arr) {
+        int temp = arr.get(i);
+        arr.set(i, arr.get(j));
+        arr.set(j, temp);
+    }
+
     public void setSortingSpeed(int sortingSpeed) {
         this.sortingSpeed = sortingSpeed;
     }

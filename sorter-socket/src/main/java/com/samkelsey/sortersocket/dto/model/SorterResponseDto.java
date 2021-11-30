@@ -16,9 +16,10 @@ import java.util.List;
 public class SorterResponseDto {
 
     @NonNull
+    @JsonProperty("evaluated-indexes")
+    private Integer[] evaluatedIndexes;
+
     @JsonProperty("sorting-list")
     private List<Integer> sortingList;
 
-    @JsonProperty("current-indexes")
-    private int[] currentIndexes;
 }

@@ -56,26 +56,19 @@ public class QuickSorterImpl extends Sorter {
         for (int j = low; j < high; j++) {
             if (workingList.get(j) < pi) {
                 i++;
-                swap(i, j);
+                swap(i, j, workingList);
+                send(new SorterResponseDto(new Integer[]{i, j}, workingList));
+            } else {
+                send(new SorterResponseDto(new Integer[]{i, j}));
             }
+
+            Thread.sleep(getSortingSpeed() * 100L);
         }
 
         i++;
-        swap(i, high);
+        swap(i, high, workingList);
+        send(new SorterResponseDto(new Integer[]{i, high}, workingList));
 
         return i;
-    }
-
-    /**
-     * Utility method to swap 2 workingList values, given their indexes.
-     * @param i index of workingList to swap
-     * @param j index of workingList to swap
-     */
-    private void swap(int i, int j) throws InterruptedException {
-        int swapTemp = workingList.get(i);
-        workingList.set(i, workingList.get(j));
-        workingList.set(j, swapTemp);
-        send(new SorterResponseDto(workingList));
-        Thread.sleep(getSortingSpeed() * 100L);
     }
 }

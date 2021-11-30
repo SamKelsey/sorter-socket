@@ -28,24 +28,15 @@ public class BubbleSorterImpl extends Sorter {
             for (int i = 0; i < sortedList.size() - 1; i++) {
                 if (sortedList.get(i) > sortedList.get(i + 1)) {
                     swap(i, i + 1, sortedList);
-                    send(new SorterResponseDto(sortedList, new int[]{i, i + 1}));
                     counter++;
-                    Thread.sleep(getSortingSpeed() * 100L);
+                    send(new SorterResponseDto(new Integer[]{i, i + 1}, sortedList));
+                } else {
+                    send(new SorterResponseDto(new Integer[]{i, i + 1}));
                 }
+
+                Thread.sleep(getSortingSpeed() * 100L);
             }
         }
         return sortedList;
-    }
-
-    /**
-     * Performs an inplace swap of two elements in a list, given their indexes.
-     * @param i Index of first element to swap.
-     * @param j Index of second element to swap.
-     * @param arr List to perform swap on.
-     */
-    private void swap(int i, int j, List<Integer> arr) {
-        int temp = arr.get(i);
-        arr.set(i, arr.get(j));
-        arr.set(j, temp);
     }
 }
