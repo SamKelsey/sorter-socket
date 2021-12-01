@@ -10,14 +10,13 @@ import java.util.List;
 public abstract class Sorter {
 
     private final SimpMessageSendingOperations simpMessageSendingOperations;
+    private final String sortingMethod;
     private int sortingSpeed = 5;
-    private String sortingMethod;
 
     public Sorter(SimpMessageSendingOperations simpMessageSendingOperations, String sortingMethod) {
         this.simpMessageSendingOperations = simpMessageSendingOperations;
         this.sortingMethod = sortingMethod;
     }
-
 
     public abstract List<Integer> sort(List<Integer> unsortedList) throws InterruptedException;
 

@@ -42,11 +42,11 @@ public class QuickSorterImpl extends Sorter {
     }
 
     /**
-     * This method is responsible for correctly partitioning a subarray of workingList.
+     * Partitioning a subarray of workingList.
      * The pivot element is put in it's correct location in workingList and it's index is returned.
      * @param low Minimum index for workingList subarray
      * @param high Maxumum working index for workingList subarray
-     * @return An int, marking the updated position of the pivot element.
+     * @return int, marking the updated position of the pivot element.
      */
     private int partition(int low, int high) throws InterruptedException {
         // Take last element as pivot
@@ -54,14 +54,15 @@ public class QuickSorterImpl extends Sorter {
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
+            SorterResponseDto res = new SorterResponseDto(new Integer[]{i, j});
+
             if (workingList.get(j) < pi) {
                 i++;
                 swap(i, j, workingList);
-                send(new SorterResponseDto(new Integer[]{i, j}, workingList));
-            } else {
-                send(new SorterResponseDto(new Integer[]{i, j}));
+                res.setSortingList(workingList);
             }
 
+            send(res);
             Thread.sleep(getSortingSpeed() * 100L);
         }
 

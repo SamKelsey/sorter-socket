@@ -26,14 +26,15 @@ public class BubbleSorterImpl extends Sorter {
         while (counter > 0){
             counter = 0;
             for (int i = 0; i < sortedList.size() - 1; i++) {
+                SorterResponseDto res = new SorterResponseDto(new Integer[]{i, i + 1});
+
                 if (sortedList.get(i) > sortedList.get(i + 1)) {
                     swap(i, i + 1, sortedList);
                     counter++;
-                    send(new SorterResponseDto(new Integer[]{i, i + 1}, sortedList));
-                } else {
-                    send(new SorterResponseDto(new Integer[]{i, i + 1}));
+                    res.setSortingList(sortedList);
                 }
 
+                send(res);
                 Thread.sleep(getSortingSpeed() * 100L);
             }
         }
