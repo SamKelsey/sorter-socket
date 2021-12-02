@@ -7,6 +7,7 @@ import "./app.css";
 export const App = () => {
   const [stompClient, setStompClient] = useState("");
   const [array, setArray] = useState([]);
+  const [sortingSpeed, setSortingSpeed] = useState(5);
 
   useEffect(() => {
     // Connect to socket
@@ -14,8 +15,11 @@ export const App = () => {
     const stomp = Stomp.over(socket);
     stomp.connect({}, function (frame) {
       stomp.subscribe("/sorting", function ({ body }) {
-        console.log("Response: " + body);
-        // setArray(response.body["sorting-list"]);
+        const {
+          body: { "sorting-list": sortingList },
+        } = JSON.parse(body);
+
+        sortingList && setArray(sortingList);
       });
       stomp.subscribe("/errors", function (response) {});
     });
@@ -35,8 +39,8 @@ export const App = () => {
       {},
       JSON.stringify({
         "sorting-list": array,
-        "sorting-method": "Bubblesort",
-        "sorting-speed": 1,
+        "sorting-method": "Quicksort",
+        "sorting-speed": sortingSpeed,
       })
     );
   };
@@ -49,16 +53,27 @@ export const App = () => {
     <div>
       <button onClick={() => sendMessage()}>Sort</button>
       <button onClick={() => generateArray()}>Generate</button>
+      <input
+        type="range"
+        min="1"
+        max="10"
+        value={sortingSpeed}
+        onChange={(e) => setSortingSpeed(e.target.value)}
+      />
+      <label>{sortingSpeed}</label>
       <div className="array-wrapper">
-        {array.map((item) => (
-          <div
-            className="array-item"
-            key={item}
-            style={{ height: `${item}px` }}
-          ></div>
+        {/* I think this is where the ui bug is occuring. */}
+        {array.map((item, index) => (
+          <div>
+            <div
+              className="array-item"
+              key={index}
+              style={{ height: `${item}px` }}
+            ></div>
+            <div>{item}</div>
+          </div>
         ))}
       </div>
-      <div>{array}</div>
     </div>
   );
 };
