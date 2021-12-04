@@ -76,6 +76,8 @@ public class SorterControllerIntegrationTest {
         receivedErrors.clear();
     }
 
+    // TODO: Add integration test for retrieving all sorting methods.
+
     @Test
     void shouldReturnSortedList_whenValidPayload() throws Exception {
         session.send(SORTER_ENDPOINT, TestUtils.createSorterRequestDto());

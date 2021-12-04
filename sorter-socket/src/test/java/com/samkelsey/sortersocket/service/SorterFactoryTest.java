@@ -11,10 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,6 +54,15 @@ public class SorterFactoryTest {
         assertThrows(BadRequestException.class, () -> {
             factory.getSorter(req);
         });
+    }
+
+    @Test
+    void shouldReturnAllSorters_whenGetAllSorters() {
+        SorterFactory factory = createFactoryWithMockSorter();
+        Collection<String> sorters = factory.getAllSorters();
+
+        assertTrue(sorters.contains("Bubblesort"));
+        assertEquals(1, sorters.size());
     }
 
     private SorterFactory createFactoryWithRealSorter() {
