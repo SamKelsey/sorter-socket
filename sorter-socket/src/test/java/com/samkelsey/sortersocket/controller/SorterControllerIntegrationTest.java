@@ -7,9 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,6 +29,7 @@ public class SorterControllerIntegrationTest {
         mockMvc.perform(get("/sorter-methods"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json("{'sorting-methods': ['Quicksort', 'Bubblesort']}"));
+                .andExpect(jsonPath("$.sorting-methods")
+                        .value(new ArrayList<>(sorterFactory.getAllSorters())));
     }
 }
