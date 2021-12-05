@@ -28,6 +28,7 @@ public class SorterController {
 
     @GetMapping("/sorter-methods")
     public ResponseEntity<AllSortersResponseDto> getSorterMethods() {
+        logger.info("Fetching all sorting methods.");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new AllSortersResponseDto(sorterFactory.getAllSorters()));
