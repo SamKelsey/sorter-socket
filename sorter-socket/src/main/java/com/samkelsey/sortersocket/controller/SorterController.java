@@ -40,5 +40,4 @@ public class SorterController {
         Sorter sorter = sorterFactory.getSorter(sorterRequestDto);
         sorter.sort(sorterRequestDto.getSortingList());
     }
-
 }

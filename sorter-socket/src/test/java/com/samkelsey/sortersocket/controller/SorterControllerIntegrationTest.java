@@ -29,7 +29,7 @@ public class SorterControllerIntegrationTest {
         mockMvc.perform(get("/sorter-methods"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sorting-methods")
+                .andExpect(jsonPath("$.sorter-methods")
                         .value(new ArrayList<>(sorterFactory.getAllSorters())));
     }
 }

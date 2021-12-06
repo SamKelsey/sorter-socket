@@ -11,8 +11,8 @@ import java.util.Collection;
 @Data
 public class AllSortersResponseDto {
 
-    @JsonProperty("sorting-methods")
+    @JsonProperty("sorter-methods")
     @NonNull
-    private Collection<String> sortingMethods;
+    private Collection<String> sorterMethods;
 
 }

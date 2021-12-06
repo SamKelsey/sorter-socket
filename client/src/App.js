@@ -8,6 +8,9 @@ export const App = () => {
   const [stompClient, setStompClient] = useState("");
   const [array, setArray] = useState([]);
   const [sortingSpeed, setSortingSpeed] = useState(5);
+  const [sortingMethods, setSortingMethods] = useState([]);
+  const [sortingMethod, setSortingMethod] = useState("Bubblesort");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Connect to socket
@@ -25,6 +28,8 @@ export const App = () => {
     });
     setStompClient(stomp);
 
+    fetchData();
+
     // Envoked like ComponentWillUnmount - Disconnects from socket.
     // return function cleanup() {
     //   stompClient.disconnect(() => {
@@ -33,13 +38,20 @@ export const App = () => {
     // };
   }, []);
 
+  async function fetchData() {
+    const res = await fetch("http://localhost:8080/sorter-methods");
+    const data = await res.json();
+    setSortingMethods(data["sorter-methods"]);
+    setLoading(false);
+  }
+
   const sendMessage = () => {
     stompClient.send(
       "/app/sort",
       {},
       JSON.stringify({
         "sorting-list": array,
-        "sorting-method": "Quicksort",
+        "sorting-method": sortingMethod,
         "sorting-speed": sortingSpeed,
       })
     );
@@ -61,6 +73,15 @@ export const App = () => {
         onChange={(e) => setSortingSpeed(e.target.value)}
       />
       <label>{sortingSpeed}</label>
+      <select onChange={(e) => setSortingMethod(e.target.value)}>
+        <option value="">Select a sorting method...</option>
+        {!loading &&
+          sortingMethods.map((method) => (
+            <option key={method} value={method}>
+              {method}
+            </option>
+          ))}
+      </select>
       <div className="array-wrapper">
         {/* I think this is where the ui bug is occuring. */}
         {array.map((item, index) => (
