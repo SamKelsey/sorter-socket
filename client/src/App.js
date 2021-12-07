@@ -7,6 +7,7 @@ import "./app.css";
 export const App = () => {
   const [stompClient, setStompClient] = useState("");
   const [array, setArray] = useState([]);
+  const [evaluatedIndexes, setEvaluatedIndexes] = useState([]);
   const [sortingSpeed, setSortingSpeed] = useState(5);
   const [sortingMethods, setSortingMethods] = useState([]);
   const [sortingMethod, setSortingMethod] = useState("Bubblesort");
@@ -19,10 +20,10 @@ export const App = () => {
     stomp.connect({}, function (frame) {
       stomp.subscribe("/sorting", function ({ body }) {
         const {
-          body: { "sorting-list": sortingList },
+          body: { "sorting-list": sortingList, "evaluated-indexes": indexes },
         } = JSON.parse(body);
-
         sortingList && setArray(sortingList);
+        indexes && setEvaluatedIndexes(indexes);
       });
       stomp.subscribe("/errors", function (response) {});
     });
@@ -61,6 +62,14 @@ export const App = () => {
     setArray(Array.from({ length: 10 }, () => Math.floor(Math.random() * 100)));
   };
 
+  const getColour = (index) => {
+    if (evaluatedIndexes.includes(index)) {
+      return "blue";
+    }
+
+    return "green";
+  };
+
   return (
     <div>
       <button onClick={() => sendMessage()}>Sort</button>
@@ -89,7 +98,10 @@ export const App = () => {
             <div
               className="array-item"
               key={index}
-              style={{ height: `${item}px` }}
+              style={{
+                height: `${item}px`,
+                backgroundColor: getColour(index),
+              }}
             ></div>
             <div>{item}</div>
           </div>

@@ -34,6 +34,8 @@ public class SorterController {
                 .body(new AllSortersResponseDto(sorterFactory.getAllSorters()));
     }
 
+    // TODO: implement endpoint to stop the sorting and reset.
+
     @MessageMapping("/sort")
     public void sort(@Valid @RequestBody SorterRequestDto sorterRequestDto) throws Exception {
         logger.info("Processing new submission.");
