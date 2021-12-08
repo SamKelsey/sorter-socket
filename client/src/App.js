@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
+import FlipMove from "react-flip-move";
+import Column from "./Column";
 
 import "./app.css";
 
@@ -59,7 +61,27 @@ export const App = () => {
   };
 
   const generateArray = () => {
-    setArray(Array.from({ length: 10 }, () => Math.floor(Math.random() * 100)));
+    let arr = [2, 2];
+    while (doubleValue(arr)) {
+      arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
+    }
+    setEvaluatedIndexes([]);
+    setArray(arr);
+  };
+
+  /* 
+  Disgusting/hacky method to ensure the array doesn't include
+  any duplicates, as duplicates cause a ui bug... :(
+  */
+  const doubleValue = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      const result = arr.filter((num) => num == arr[i]);
+
+      if (result.length > 1) {
+        return true;
+      }
+    }
+    return false;
   };
 
   const getColour = (index) => {
@@ -69,7 +91,6 @@ export const App = () => {
 
     return "green";
   };
-
   return (
     <div>
       <button onClick={() => sendMessage()}>Sort</button>
@@ -91,22 +112,21 @@ export const App = () => {
             </option>
           ))}
       </select>
-      <div className="array-wrapper">
-        {/* I think this is where the ui bug is occuring. */}
-        {array.map((item, index) => (
-          <div>
-            <div
-              className="array-item"
-              key={index}
-              style={{
-                height: `${item}px`,
-                backgroundColor: getColour(index),
-              }}
-            ></div>
-            <div>{item}</div>
-          </div>
-        ))}
-      </div>
+      <FlipMove className="array-wrapper">
+        {array.map((item, index) => {
+          return <Column key={item} item={item} colour={getColour(index)} />;
+          // <div key={index}>
+          //   <div
+          //     className="array-item"
+          //     style={{
+          //       height: `${item}px`,
+          //       backgroundColor: getColour(index),
+          //     }}
+          //   ></div>
+          //   <div>{item}</div>
+          // </div>
+        })}
+      </FlipMove>
     </div>
   );
 };
