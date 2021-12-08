@@ -113,19 +113,9 @@ export const App = () => {
           ))}
       </select>
       <FlipMove className="array-wrapper">
-        {array.map((item, index) => {
-          return <Column key={item} item={item} colour={getColour(index)} />;
-          // <div key={index}>
-          //   <div
-          //     className="array-item"
-          //     style={{
-          //       height: `${item}px`,
-          //       backgroundColor: getColour(index),
-          //     }}
-          //   ></div>
-          //   <div>{item}</div>
-          // </div>
-        })}
+        {array.map((item, index) => (
+          <Column key={item} item={item} colour={getColour(index)} />
+        ))}
       </FlipMove>
     </div>
   );
