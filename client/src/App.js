@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSorterMethods } from "./hooks/useSorterMethods";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
 import FlipMove from "react-flip-move";
@@ -11,9 +12,9 @@ export const App = () => {
   const [array, setArray] = useState([]);
   const [evaluatedIndexes, setEvaluatedIndexes] = useState([]);
   const [sortingSpeed, setSortingSpeed] = useState(5);
-  const [sortingMethods, setSortingMethods] = useState([]);
   const [sortingMethod, setSortingMethod] = useState("Bubblesort");
-  const [loading, setLoading] = useState(true);
+
+  const [sortingMethods, loading] = useSorterMethods();
 
   useEffect(() => {
     // Connect to socket
@@ -31,8 +32,6 @@ export const App = () => {
     });
     setStompClient(stomp);
 
-    fetchData();
-
     // Envoked like ComponentWillUnmount - Disconnects from socket.
     // return function cleanup() {
     //   stompClient.disconnect(() => {
@@ -40,13 +39,6 @@ export const App = () => {
     //   });
     // };
   }, []);
-
-  async function fetchData() {
-    const res = await fetch("http://localhost:8080/sorter-methods");
-    const data = await res.json();
-    setSortingMethods(data["sorter-methods"]);
-    setLoading(false);
-  }
 
   const sendMessage = () => {
     stompClient.send(
