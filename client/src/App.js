@@ -4,6 +4,7 @@ import Stomp from "stompjs";
 import SockJS from "sockjs-client";
 import FlipMove from "react-flip-move";
 import Column from "./Column";
+import { createUniqueArray } from "./services/arrayGenerator";
 
 import "./app.css";
 
@@ -53,36 +54,11 @@ export const App = () => {
   };
 
   const generateArray = () => {
-    let arr = [2, 2];
-    while (doubleValue(arr)) {
-      arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
-    }
-    setEvaluatedIndexes([]);
+    const arr = createUniqueArray();
     setArray(arr);
+    setEvaluatedIndexes([]);
   };
 
-  /* 
-  Disgusting/hacky method to ensure the array doesn't include
-  any duplicates, as duplicates cause a ui bug... :(
-  */
-  const doubleValue = (arr) => {
-    for (let i = 0; i < arr.length; i++) {
-      const result = arr.filter((num) => num == arr[i]);
-
-      if (result.length > 1) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const getColour = (index) => {
-    if (evaluatedIndexes.includes(index)) {
-      return "blue";
-    }
-
-    return "green";
-  };
   return (
     <div>
       <button onClick={() => sendMessage()}>Sort</button>
@@ -106,7 +82,11 @@ export const App = () => {
       </select>
       <FlipMove className="array-wrapper">
         {array.map((item, index) => (
-          <Column key={item} item={item} colour={getColour(index)} />
+          <Column
+            key={item}
+            item={item}
+            colour={evaluatedIndexes.includes(index) ? "blue" : "green"}
+          />
         ))}
       </FlipMove>
     </div>
